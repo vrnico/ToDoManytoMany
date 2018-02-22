@@ -1,10 +1,15 @@
 @{
   Layout = "_Layout";
 }
-
-<h1>To Do List</h1>
+<div class="jumbotron">
+  <div class="text-center">
+<img src="http://theinspirationgrid.com/app/uploads/2015/04/motion-uno-moralez-05.gif" alt="Responsive image">
+<br>
+<h6>welcome to nico's life planner 1.0. This is an ongoing local database of nico's hopes and dreams, and as of February 2018, how nico keeps track of things. it may seem pointless right now, but its purpose is to help nico gain comfort with database structures.</h6>
+</div>
+</div>
 @foreach (var category in Model)
 {
   <h4>@category.GetName() | <a href="/categories/@category.GetId()">View</a> | <a href="/categories/@category.GetId()/delete">Delete</a></h4>
 }
-<a href="/categories/new">Add New Category</a>
+<a href="/categories/new" class="btn btn-danger btn-lg active">ADD NEW LIFE PATH</a>

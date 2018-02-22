@@ -1,7 +1,12 @@
 @{
   Layout = "_Layout";
 }
-
+<div class="jumbotron">
+  <div class="text-center">
+<img src="https://media.giphy.com/media/T8vPeLVG81Iqc/giphy.gif" alt="Responsive image">
+<br>
+</div>
+</div>
 <h1>@Model["category"].GetName()</h1>
 <form method="post" action='/categories/@Model["category"].GetId()/items/sort'>
   <small class="text-muted">SORT BY DATE:</small>
@@ -12,5 +17,8 @@
 {
   <h4>@item.GetDescription() | Due @item.GetFormattedDate() | <a href="/items/@item.GetId()/update">Edit</a> | <a href="/items/@item.GetId()/delete">Delete</a></h4>
 }
-<p><a href='/categories/@Model["category"].GetId()/items/new'>Add a new item</a></p>
-<p><a href="/">Return Home</a></p>
+<br>
+<br>
+<p><a href='/categories/@Model["category"].GetId()/items/new' class="btn btn-secondary btn-lg" role="button"><img src="https://media.giphy.com/media/zpPjlIncVkUc8/giphy.gif" width="50" height="50"> Add a new item</a></p>
+<p><a href="/" class="btn btn-secondary btn-lg" role="button"><img src="https://openclipart.org/download/263947/House-4.svg" width="30" height="30">Return Home</a>
+</p>

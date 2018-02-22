@@ -1,0 +1,24 @@
+body {
+  background: linear-gradient(to top, #000000 0%, #434343 100%);
+  height: 100%;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: white;
+  font-family: 'Source Code Pro', monospace;
+}
+
+.jumbotron {
+  background: linear-gradient(to top, #dd1818 0%, #dd1818 100%);
+  margin-top: 4em;
+}
+
+.btn-secondary {
+  color: black;
+  background: white;
+}
+
+.text-muted {
+  font-size: 1,8em;
+  color: white;
+}
