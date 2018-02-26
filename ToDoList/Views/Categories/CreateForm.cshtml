@@ -4,10 +4,13 @@
 <h1>To Do List</h1>
 <h2>Add new category</h2>
 <hr />
+<div class="form-group">
 <form action="/categories" method="post">
   <label for="category-name">Category name:</label>
-  <input id="category-name" name="category-name" type="text">
-  <button type="submit">Add</button>
+  <input id="category-name" name="category-name" type="text" class="form-control">
+  <br>
+  <button type="submit" class="btn btn-primary btn-lg btn-success">Add</button>
 </form>
-<h4><a href="/categories">View All Categories</a></h4>
-<h4><a href="/">Return home</a></h4>
+</div>
+<h4><a href="/categories"class="btn btn-primary btn-lg btn-warning">View Categories</a></h4>
+<h4><a href="/" class="btn btn-primary btn-lg btn-info">Return home</a></h4>

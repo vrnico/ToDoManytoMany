@@ -76,13 +76,14 @@ namespace ToDoList.Controllers
     //   return RedirectToAction("Detail", "categories", new {Id = thisItem.GetCategoryId()});
     // }
     //
-    // [HttpGet("/items/{id}/delete")]
-    // public ActionResult DeleteItem(int id)
-    // {
-    //   Item thisItem = Item.Find(id);
-    //   //int catId = thisItem.GetCategoryId();
-    //   thisItem.Delete();
-    //   return RedirectToAction("Detail", "categories", new {Id = thisItem.GetCategoryId()});
-    // }
+    [HttpGet("/items/{id}/delete")]
+    public ActionResult DeleteItem(int id)
+    {
+      Item thisItem = Item.Find(id);
+      //int catId = thisItem.GetCategoryId();
+      thisItem.Delete();
+      return RedirectToAction("Success", "Home");
+    // }}
+  }
   }
 }

@@ -6,19 +6,29 @@
 <h1>To Do List</h1>
 <h2>Category: @Model["category"].GetName()</h2>
 <hr />
+<h4>Here are all the items in this category:</h4>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Task</th>
+
+    </tr>
+  </thead>
+  <tbody>
 @if (@Model["categoryItems"].Count != 0)
 {
-  <h4>Here are all the items in this category:</h4>
-  <ul>
     @foreach (var item in @Model["categoryItems"])
     {
-      <li>@item.GetDescription()</li>
+      <td><a href="/items/@item.GetId()">@item.GetDescription()</a>
+        <a href="/items/@item.GetId()/delete" class="btn btn-danger">x</a></td>
     }
-  </ul>
+
 }
+</tbody>
+</table>
 <h4>Add a item to this category:</h4>
-<form action='/categories/@Model["category"].GetId()/items/new’ method='post'>
-  <label for='item-id'>Select a item</label>
+<form action='/categories/@Model["category"].GetId()/items/new' method='post'>
+  <label for='item-id'>Select an item</label>
   <select id='item-id' name='item-id' type='text'>
     @foreach (var item in @Model["allItems"])
     {

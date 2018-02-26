@@ -12,19 +12,21 @@
   <ul>
     @foreach (Category category in @Model["itemCategories"])
     {
-      <li>@category.GetName()</li>
+      <li><h1>@category.GetName()</h1></li>
     }
   </ul>
 }
 <h4>Add a category to this item:</h4>
+<div class="form-group">
 <form action='/items/@Model["item"].GetId()/categories/new' method='post'>
   <label for='category-id'>Select a category</label>
-  <select id='category-id' name='category-id' type='text'>
+  <select id='category-id' name='category-id' type='text' class="form-control">
     @foreach (var category in @Model["allCategories"])
     {
       <option value='@category.GetId()'>@category.GetName()</option>
     }
   </select>
-  <button type='submit'>Add</button>
+  <button type='submit' type="btn btn-lg btn-success">Add</button>
 </form>
+</div>
 <p><a href="/">Return to Main Page</a></p>

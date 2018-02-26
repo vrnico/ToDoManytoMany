@@ -4,14 +4,31 @@
 <h1>To Do List</h1>
 <hr />
 <h2>Items:</h2>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Task</th>
+
+        </tr>
+    </thead>
+    <tbody>
 @if (Model.Count != 0)
 {
-  <ul>
+
     @foreach (var item in Model)
     {
-      <li><a href='/items/@item.GetId()'>@item.GetDescription()</a></li>
+      <tr>
+
+           <td><a href="/items/@item.GetId()">@item.GetDescription()</a>
+             <a href="/items/@item.GetId()/delete" class="btn btn-danger">x</a></td>
+           </tr>
     }
-  </ul>
+
 }
+
+</tbody>
+</table>
 <h4><a href="/items/new">Add new item</a></h4>
 <h4><a href="/">Return home</a></h4>

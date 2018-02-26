@@ -1,11 +1,16 @@
 @{
   Layout = "_Layout";
 }
-<h1>Add a new item</h1>
+<h1>Add a new Task</h1>
+<div class="form-group">
 <form action="/items" method="post">
-  <label for="item-description">Item description:</label>
-  <input id="item-description" name="item-description" type="text">
-  <button type="submit">Add new item</button>
+  <label for="item-description"><h2>Task description:</h2></label>
+  <br>
+  <input id="item-description" name="item-description" class="form-control">
+  <br>
+  <button type="submit" class="btn btn-lg">Add new item</button>
 </form>
-<p><a href="/">Back home</a></p>
-<p><a href="/items">View all items</a></p>
+</div>
+<br>
+<p><a href="/items" class="btn btn-primary btn-lg btn-success">View all items</a></p>
+<p><a href="/" class="btn btn-primary btn-lg btn-warning">Back home</a></p>
