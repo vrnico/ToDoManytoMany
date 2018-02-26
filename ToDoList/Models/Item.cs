@@ -17,6 +17,16 @@ namespace ToDoList.Models
       _rawDate = rawDate;
     }
 
+    public void AddCategory(Category newCategory)
+    {
+
+    }
+
+    public List<Category> GetCategories()
+    {
+      List<Category> categories = new List<Category> {};
+      return categories;
+    }
 
     public string GetDescription()
     {

@@ -19,7 +19,48 @@ namespace ToDoList.Tests
       DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=todo_test;";
     }
 
-    
+    [TestMethod]
+    public void AddCategory_AddsCategoryToItem_CategoryList()
+    {
+      //Arrange
+      Item testItem = new Item("Mow the lawn", "2018-02-26");
+      testItem.Save();
+
+      Category testCategory = new Category("Home stuff");
+      testCategory.Save();
+
+      //Act
+      testItem.AddCategory(testCategory);
+
+      List<Category> result = testItem.GetCategories();
+      List<Category> testList = new List<Category>{testCategory};
+
+      //Assert
+      CollectionAssert.AreEqual(testList, result);
+    }
+
+    [TestMethod]
+     public void GetCategories_ReturnsAllItemCategories_CategoryList()
+     {
+       //Arrange
+       Item testItem = new Item("Mow the lawn", "2018-02-26");
+       testItem.Save();
+
+       Category testCategory1 = new Category("Home stuff");
+       testCategory1.Save();
+
+       Category testCategory2 = new Category("Work stuff");
+       testCategory2.Save();
+
+       //Act
+       testItem.AddCategory(testCategory1);
+       List<Category> result = testItem.GetCategories();
+       List<Category> testList = new List<Category> {testCategory1};
+
+       //Assert
+       CollectionAssert.AreEqual(testList, result);
+     }
+
     // [TestMethod]
     // public void SortAsc_ReturnSortedList_Void()
 
