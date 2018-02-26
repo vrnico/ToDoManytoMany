@@ -15,7 +15,7 @@
 </form>
 @foreach (var item in @Model["items"])
 {
-  <h4>@item.GetDescription() | Due @item.GetFormattedDate() | <a href="/items/@item.GetId()/update">Edit</a> | <a href="/items/@item.GetId()/delete">Delete</a></h4>
+  <h4>@item.GetDescription() | Due @item.GetRawDate() | <a href="/items/@item.GetId()/update">Edit</a> | <a href="/items/@item.GetId()/delete">Delete</a></h4>
 }
 <br>
 <br>

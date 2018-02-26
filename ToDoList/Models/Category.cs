@@ -110,9 +110,8 @@ namespace ToDoList.Models
         int itemId = rdr.GetInt32(0);
         string itemDescription = rdr.GetString(1);
         string itemRawDate = rdr.GetString(2);
-        int itemCategoryId = rdr.GetInt32(4);
-        Item newItem = new Item(itemDescription, itemRawDate, itemId, itemCategoryId);
-        newItem.SetDate();
+
+        Item newItem = new Item(itemDescription, itemRawDate, itemId);
         allCategoryItems.Add(newItem);
       }
       conn.Close();
@@ -207,17 +206,15 @@ namespace ToDoList.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
-        cmd.CommandText = @"SELECT * FROM `items` WHERE `category_id` = " + this.GetId() + " ORDER BY `formatted_date` " + direction + ";";
+        cmd.CommandText = @"SELECT * FROM `items` WHERE `category_id` = " + this.GetId() + " ORDER BY `raw_date` " + direction + ";";
       MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
       while (rdr.Read())
       {
         int itemId = rdr.GetInt32(0);
         string itemDescription = rdr.GetString(1);
         string itemRawDate = rdr.GetString(2);
-        int categoryId = rdr.GetInt32(4);
 
-        Item newItem = new Item(itemDescription, itemRawDate, itemId, categoryId);
-        newItem.SetDate();
+        Item newItem = new Item(itemDescription, itemRawDate, itemId);
         sortedList.Add(newItem);
       }
       conn.Close();

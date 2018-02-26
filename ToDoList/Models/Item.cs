@@ -8,34 +8,15 @@ namespace ToDoList.Models
   {
     private string _description;
     private int _id;
-    private int _categoryId;
     private string _rawDate;
-    private DateTime _formattedDate;
 
-    public Item (string description, string rawDate, int Id = 0, int categoryId = 0)
+    public Item (string description, string rawDate, int Id = 0)
     {
       _description = description;
-      _categoryId = categoryId;
       _id = Id;
       _rawDate = rawDate;
-      _formattedDate = new DateTime();
     }
 
-    public DateTime GetFormattedDate()
-    {
-      return _formattedDate;
-    }
-
-    public void SetDate()
-    {
-      string[] dateArray = _rawDate.Split('-');
-      List<int> intDateList = new List<int>{};
-      foreach (string num in dateArray)
-      {
-        intDateList.Add(Int32.Parse(num));
-      }
-      _formattedDate = new DateTime(intDateList[0], intDateList[1], intDateList[2]);
-    }
 
     public string GetDescription()
     {
@@ -52,15 +33,11 @@ namespace ToDoList.Models
       return _id;
     }
 
-    public int GetCategoryId()
+    public string GetRawDate()
     {
-      return _categoryId;
+      return _rawDate;
     }
 
-    public void SetCatId(int id)
-    {
-      _categoryId = id;
-    }
 
     public static List<Item> GetAll()
     {
@@ -75,9 +52,7 @@ namespace ToDoList.Models
         int itemId = rdr.GetInt32(0);
         string itemDescription = rdr.GetString(1);
         string itemRawDate = rdr.GetString(2);
-        int categoryId = rdr.GetInt32(4);
-        Item newItem = new Item(itemDescription, itemRawDate, itemId, categoryId);
-        newItem.SetDate();
+        Item newItem = new Item(itemDescription, itemRawDate, itemId);
         allItems.Add(newItem);
       }
       conn.Close();
@@ -107,12 +82,11 @@ namespace ToDoList.Models
 
     public void Save()
     {
-      this.SetDate();
       MySqlConnection conn = DB.Connection();
       conn.Open();
 
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"INSERT INTO `items` (`description`,  `raw_date`, `formatted_date`, `category_id`) VALUES (@ItemDescription, @RawDate, @FormattedDate, @CategoryId);";
+      cmd.CommandText = @"INSERT INTO `items` (`description`,  `raw_date`) VALUES (@ItemDescription, @RawDate);";
 
       MySqlParameter description = new MySqlParameter();
       description.ParameterName = "@ItemDescription";
@@ -122,19 +96,9 @@ namespace ToDoList.Models
       rawDate.ParameterName = "@RawDate";
       rawDate.Value = this._rawDate;
 
-      MySqlParameter formattedDate = new MySqlParameter();
-      formattedDate.ParameterName = "@FormattedDate";
-      formattedDate.Value = this._formattedDate;
-
-      MySqlParameter categoryId = new MySqlParameter();
-      categoryId.ParameterName = "@CategoryId";
-      categoryId.Value = this._categoryId;
 
       cmd.Parameters.Add(description);
       cmd.Parameters.Add(rawDate);
-      cmd.Parameters.Add(formattedDate);
-      cmd.Parameters.Add(categoryId);
-
       cmd.ExecuteNonQuery();
       _id = (int) cmd.LastInsertedId;
 
@@ -156,8 +120,7 @@ namespace ToDoList.Models
         Item newItem = (Item) otherItem;
         bool idEquality = (this.GetId() == newItem.GetId());
         bool descriptionEquality = (this.GetDescription() == newItem.GetDescription());
-        bool categoryEquality = (this.GetCategoryId() == newItem.GetCategoryId());
-        return (idEquality && descriptionEquality && categoryEquality);
+        return (idEquality && descriptionEquality);
       }
     }
     // public static void ClearAll()
@@ -182,18 +145,15 @@ namespace ToDoList.Models
       int itemId = 0;
       string itemDescription = "";
       string itemRawDate = "";
-      int itemCategoryId = 0;
 
       while (rdr.Read())
       {
         itemId = rdr.GetInt32(0);
         itemDescription = rdr.GetString(1);
         itemRawDate = rdr.GetString(2);
-        itemCategoryId = rdr.GetInt32(4);
       }
 
-      Item foundItem = new Item(itemDescription, itemRawDate, itemId, itemCategoryId);
-      foundItem.SetDate();
+      Item foundItem = new Item(itemDescription, itemRawDate, itemId);
 
       conn.Close();
       if (conn != null)
