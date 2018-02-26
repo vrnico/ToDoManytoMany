@@ -93,34 +93,36 @@ namespace ToDoList.Models
 
     public List<Item> GetItems()
     {
-      List<Item> allCategoryItems = new List<Item> {};
       MySqlConnection conn = DB.Connection();
       conn.Open();
-      var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"SELECT * FROM `items` WHERE `category_id` = @category_id;";
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"SELECT items.* FROM categories
+          JOIN categories_items ON (categories.id = categories_items.category_id)
+          JOIN items ON (categories_items.item_id = items.id)
+          WHERE categories.id = @CategoryId;";
 
-      MySqlParameter categoryId = new MySqlParameter();
-      categoryId.ParameterName = "@category_id";
-      categoryId.Value = this._id;
-      cmd.Parameters.Add(categoryId);
+      MySqlParameter categoryIdParameter = new MySqlParameter();
+      categoryIdParameter.ParameterName = "@CategoryId";
+      categoryIdParameter.Value = _id;
+      cmd.Parameters.Add(categoryIdParameter);
 
-      var rdr = cmd.ExecuteReader() as MySqlDataReader;
+      MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
+      List<Item> items = new List<Item>{};
+
       while(rdr.Read())
       {
         int itemId = rdr.GetInt32(0);
         string itemDescription = rdr.GetString(1);
         string itemRawDate = rdr.GetString(2);
-
         Item newItem = new Item(itemDescription, itemRawDate, itemId);
-        allCategoryItems.Add(newItem);
+        items.Add(newItem);
       }
       conn.Close();
       if (conn != null)
       {
-        conn.Dispose();
+          conn.Dispose();
       }
-
-      return allCategoryItems;
+      return items;
     }
 
     public static void DeleteAll()
@@ -139,30 +141,47 @@ namespace ToDoList.Models
         conn.Dispose();
       }
     }
+    public void AddItem(Item newItem)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"INSERT INTO categories_items (category_id, item_id) VALUES (@CategoryId, @ItemId);";
+
+      MySqlParameter category_id = new MySqlParameter();
+      category_id.ParameterName = "@CategoryId";
+      category_id.Value = _id;
+      cmd.Parameters.Add(category_id);
+
+      MySqlParameter item_id = new MySqlParameter();
+      item_id.ParameterName = "@ItemId";
+      item_id.Value = newItem.GetId();
+      cmd.Parameters.Add(item_id);
+
+      cmd.ExecuteNonQuery();
+      conn.Close();
+      if (conn != null)
+      {
+          conn.Dispose();
+      }
+    }
 
     public void Delete()
     {
       MySqlConnection conn = DB.Connection();
       conn.Open();
-      var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"DELETE FROM categories WHERE id = @thisId;";
 
-      var cmdItems = conn.CreateCommand() as MySqlCommand;
-      cmdItems.CommandText = @"DELETE FROM items WHERE category_id = @thisId;";
+      MySqlCommand cmd = new MySqlCommand("DELETE FROM categories WHERE id = @CategoryId; DELETE FROM categories_items WHERE category_id = @CategoryId;", conn);
+      MySqlParameter categoryIdParameter = new MySqlParameter();
+      categoryIdParameter.ParameterName = "@CategoryId";
+      categoryIdParameter.Value = this.GetId();
 
-      MySqlParameter thisId = new MySqlParameter();
-      thisId.ParameterName = "@thisId";
-      thisId.Value = _id;
-      cmd.Parameters.Add(thisId);
-      cmdItems.Parameters.Add(thisId);
-
-      cmdItems.ExecuteNonQuery();
+      cmd.Parameters.Add(categoryIdParameter);
       cmd.ExecuteNonQuery();
 
-      conn.Close();
       if (conn != null)
       {
-        conn.Dispose();
+        conn.Close();
       }
     }
 
