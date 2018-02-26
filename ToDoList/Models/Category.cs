@@ -35,8 +35,8 @@ namespace ToDoList.Models
       MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
       while (rdr.Read())
       {
-        int categoryId = rdr.GetInt32(1);
-        string categoryName = rdr.GetString(0);
+        int categoryId = rdr.GetInt32(0);
+        string categoryName = rdr.GetString(1);
         Category newCategory = new Category(categoryName, categoryId);
         allCategories.Add(newCategory);
       }
@@ -92,38 +92,37 @@ namespace ToDoList.Models
     }
 
     public List<Item> GetItems()
-    {
-      MySqlConnection conn = DB.Connection();
-      conn.Open();
-      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"SELECT items.* FROM categories
-          JOIN categories_items ON (categories.id = categories_items.category_id)
-          JOIN items ON (categories_items.item_id = items.id)
-          WHERE categories.id = @CategoryId;";
-
-      MySqlParameter categoryIdParameter = new MySqlParameter();
-      categoryIdParameter.ParameterName = "@CategoryId";
-      categoryIdParameter.Value = _id;
-      cmd.Parameters.Add(categoryIdParameter);
-
-      MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
-      List<Item> items = new List<Item>{};
-
-      while(rdr.Read())
       {
-        int itemId = rdr.GetInt32(0);
-        string itemDescription = rdr.GetString(1);
-        string itemRawDate = rdr.GetString(2);
-        Item newItem = new Item(itemDescription, itemRawDate, itemId);
-        items.Add(newItem);
+          MySqlConnection conn = DB.Connection();
+          conn.Open();
+          MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+          cmd.CommandText = @"SELECT items.* FROM categories
+              JOIN categories_items ON (categories.id = categories_items.category_id)
+              JOIN items ON (categories_items.item_id = items.id)
+              WHERE categories.id = @CategoryId;";
+
+          MySqlParameter categoryIdParameter = new MySqlParameter();
+          categoryIdParameter.ParameterName = "@CategoryId";
+          categoryIdParameter.Value = _id;
+          cmd.Parameters.Add(categoryIdParameter);
+
+          MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
+          List<Item> items = new List<Item>{};
+
+          while(rdr.Read())
+          {
+            int itemId = rdr.GetInt32(0);
+            string itemDescription = rdr.GetString(1);
+            Item newItem = new Item(itemDescription, itemId);
+            items.Add(newItem);
+          }
+          conn.Close();
+          if (conn != null)
+          {
+              conn.Dispose();
+          }
+          return items;
       }
-      conn.Close();
-      if (conn != null)
-      {
-          conn.Dispose();
-      }
-      return items;
-    }
 
     public static void DeleteAll()
     {
@@ -142,48 +141,48 @@ namespace ToDoList.Models
       }
     }
     public void AddItem(Item newItem)
-    {
-      MySqlConnection conn = DB.Connection();
-      conn.Open();
-      var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"INSERT INTO categories_items (category_id, item_id) VALUES (@CategoryId, @ItemId);";
+        {
+            MySqlConnection conn = DB.Connection();
+            conn.Open();
+            var cmd = conn.CreateCommand() as MySqlCommand;
+            cmd.CommandText = @"INSERT INTO categories_items (category_id, item_id) VALUES (@CategoryId, @ItemId);";
 
-      MySqlParameter category_id = new MySqlParameter();
-      category_id.ParameterName = "@CategoryId";
-      category_id.Value = _id;
-      cmd.Parameters.Add(category_id);
+            MySqlParameter category_id = new MySqlParameter();
+            category_id.ParameterName = "@CategoryId";
+            category_id.Value = _id;
+            cmd.Parameters.Add(category_id);
 
-      MySqlParameter item_id = new MySqlParameter();
-      item_id.ParameterName = "@ItemId";
-      item_id.Value = newItem.GetId();
-      cmd.Parameters.Add(item_id);
+            MySqlParameter item_id = new MySqlParameter();
+            item_id.ParameterName = "@ItemId";
+            item_id.Value = newItem.GetId();
+            cmd.Parameters.Add(item_id);
 
-      cmd.ExecuteNonQuery();
-      conn.Close();
-      if (conn != null)
-      {
-          conn.Dispose();
-      }
-    }
+            cmd.ExecuteNonQuery();
+            conn.Close();
+            if (conn != null)
+            {
+                conn.Dispose();
+            }
+        }
 
     public void Delete()
+  {
+    MySqlConnection conn = DB.Connection();
+    conn.Open();
+
+    MySqlCommand cmd = new MySqlCommand("DELETE FROM categories WHERE id = @CategoryId; DELETE FROM categories_items WHERE category_id = @CategoryId;", conn);
+    MySqlParameter categoryIdParameter = new MySqlParameter();
+    categoryIdParameter.ParameterName = "@CategoryId";
+    categoryIdParameter.Value = this.GetId();
+
+    cmd.Parameters.Add(categoryIdParameter);
+    cmd.ExecuteNonQuery();
+
+    if (conn != null)
     {
-      MySqlConnection conn = DB.Connection();
-      conn.Open();
-
-      MySqlCommand cmd = new MySqlCommand("DELETE FROM categories WHERE id = @CategoryId; DELETE FROM categories_items WHERE category_id = @CategoryId;", conn);
-      MySqlParameter categoryIdParameter = new MySqlParameter();
-      categoryIdParameter.ParameterName = "@CategoryId";
-      categoryIdParameter.Value = this.GetId();
-
-      cmd.Parameters.Add(categoryIdParameter);
-      cmd.ExecuteNonQuery();
-
-      if (conn != null)
-      {
-        conn.Close();
-      }
+      conn.Close();
     }
+  }
 
     public static Category Find(int id)
     {
@@ -204,8 +203,8 @@ namespace ToDoList.Models
 
       while (rdr.Read())
       {
-        categoryId = rdr.GetInt32(1);
-        categoryName = rdr.GetString(0);
+        categoryId = rdr.GetInt32(0);
+        categoryName = rdr.GetString(1);
       }
 
       Category foundCategory = new Category(categoryName, categoryId);
@@ -233,7 +232,7 @@ namespace ToDoList.Models
         string itemDescription = rdr.GetString(1);
         string itemRawDate = rdr.GetString(2);
 
-        Item newItem = new Item(itemDescription, itemRawDate, itemId);
+        Item newItem = new Item(itemDescription, itemId);
         sortedList.Add(newItem);
       }
       conn.Close();

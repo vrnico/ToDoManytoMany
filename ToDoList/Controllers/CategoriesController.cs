@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using ToDoList.Models;
+using System;
 
 namespace ToDoList.Controllers
 {
   public class CategoriesController : Controller
   {
-    [Route("/")]
+    [Route("/categories")]
     public ActionResult Index()
     {
       List<Category> allCats = Category.GetAll();
@@ -14,28 +15,30 @@ namespace ToDoList.Controllers
     }
 
     [HttpGet("/categories/new")]
-    public ActionResult CreateCatForm()
+    public ActionResult CreateForm()
     {
-      return View();
+        return View();
     }
 
     [HttpPost("/categories")]
-    public ActionResult CreateCategory()
+    public ActionResult Create()
     {
-      Category newCategory = new Category(Request.Form["name"]);
-      newCategory.Save();
-      return RedirectToAction("Index");
+        Category newCategory = new Category(Request.Form["category-name"]);
+        newCategory.Save();
+        return RedirectToAction("Success", "Home");
     }
 
     [HttpGet("/categories/{id}")]
     public ActionResult Detail(int id)
     {
-      Dictionary<string, object> model = new Dictionary<string, object>();
-      Category selectedCategory = Category.Find(id);
-      List<Item> allItems = selectedCategory.GetItems();
-      model.Add("category", selectedCategory);
-      model.Add("items", allItems);
-      return View(model);
+        Dictionary<string, object> model = new Dictionary<string, object>();
+        Category selectedCategory = Category.Find(id);
+        List<Item> categoryItems = selectedCategory.GetItems();
+        List<Item> allItems = Item.GetAll();
+        model.Add("category", selectedCategory);
+        model.Add("categoryItems", categoryItems);
+        model.Add("allItems", allItems);
+        return View(model);
     }
 
     [HttpPost("/categories/{id}/items")]
@@ -44,8 +47,8 @@ namespace ToDoList.Controllers
         Dictionary<string, object> model = new Dictionary<string, object>();
         Category foundCategory = Category.Find(id);
         List<Item> categoryItems = foundCategory.GetItems();
-        Item newItem = new Item(Request.Form["new-item"], Request.Form["raw-date"]);
-        
+        Item newItem = new Item(Request.Form["new-item"]);
+
         categoryItems.Add(newItem);
         newItem.Save();
         model.Add("items", categoryItems);
@@ -53,32 +56,21 @@ namespace ToDoList.Controllers
         return View("Detail", model);
     }
 
+    [HttpPost("/categories/{categoryId}/items/new")]
+      public ActionResult AddItem(int categoryId)
+      {
+          Category category = Category.Find(categoryId);
+          Item item = Item.Find(Int32.Parse(Request.Form["item-id"]));
+          category.AddItem(item);
+          return RedirectToAction("Success", "Home");
+      }
+
     [HttpGet("/categories/{id}/delete")]
     public ActionResult DeleteCategory(int id)
     {
       Category thisCategory = Category.Find(id);
       thisCategory.Delete();
       return RedirectToAction("Index");
-    }
-
-    [HttpPost("/categories/{id}/items/sort")]
-    public ActionResult Sort(int id)
-    {
-      Category sortCat = Category.Find(id);
-      List<Item> sortedItems = new List<Item>{};
-      if(Request.Form["selection"].Equals("ASC"))
-      {
-        sortedItems = sortCat.Sort("ASC");
-      }
-      else if(Request.Form["selection"].Equals("DESC"))
-      {
-        sortedItems = sortCat.Sort("DESC");
-      }
-      Dictionary<string, object> model = new Dictionary<string, object>();
-      model.Add("category", sortCat);
-      model.Add("items", sortedItems);
-      return View("Detail", model);
-
     }
   }
 }

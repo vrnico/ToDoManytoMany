@@ -1,24 +1,30 @@
 @{
   Layout = "_Layout";
 }
-<div class="jumbotron">
-  <div class="text-center">
-<img src="https://media.giphy.com/media/T8vPeLVG81Iqc/giphy.gif" alt="Responsive image">
-<br>
-</div>
-</div>
-<h1>@Model["category"].GetName()</h1>
-<form method="post" action='/categories/@Model["category"].GetId()/items/sort'>
-  <small class="text-muted">SORT BY DATE:</small>
-  <button type="submit" name="selection" class="btn btn-primary" value="ASC">^</button>
-  <button type="submit" name="selection" class= "btn btn-primary" value="DESC">v</button>
-</form>
-@foreach (var item in @Model["items"])
+@using ToDoList.Models;
+
+<h1>To Do List</h1>
+<h2>Category: @Model["category"].GetName()</h2>
+<hr />
+@if (@Model["categoryItems"].Count != 0)
 {
-  <h4>@item.GetDescription() | Due @item.GetRawDate() | <a href="/items/@item.GetId()/update">Edit</a> | <a href="/items/@item.GetId()/delete">Delete</a></h4>
+  <h4>Here are all the items in this category:</h4>
+  <ul>
+    @foreach (var item in @Model["categoryItems"])
+    {
+      <li>@item.GetDescription()</li>
+    }
+  </ul>
 }
-<br>
-<br>
-<p><a href='/categories/@Model["category"].GetId()/items/new' class="btn btn-secondary btn-lg" role="button"><img src="https://media.giphy.com/media/zpPjlIncVkUc8/giphy.gif" width="50" height="50"> Add a new item</a></p>
-<p><a href="/" class="btn btn-secondary btn-lg" role="button"><img src="https://openclipart.org/download/263947/House-4.svg" width="30" height="30">Return Home</a>
-</p>
+<h4>Add a item to this category:</h4>
+<form action='/categories/@Model["category"].GetId()/items/new’ method='post'>
+  <label for='item-id'>Select a item</label>
+  <select id='item-id' name='item-id' type='text'>
+    @foreach (var item in @Model["allItems"])
+    {
+      <option value='@item.GetId()'>@item.GetDescription()</option>
+    }
+  </select>
+  <button type='submit'>Add</button>
+</form>
+<p><a href="/">Return to Main Page</a></p>
